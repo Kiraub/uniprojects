@@ -1,0 +1,34 @@
+#!/bin/sh
+#a)
+sed "s/\t/ /g" $1 | #ist eigentlich gar nicht notwendig, awk kommt auch mit tab als field separator klar
+awk 'length!=0 { print $2" "$3" "$4" "$5}' | #vordefinierte Variable length enthält länge der aktuellen Zeile. Durch length!=0 werden leere Zeilen ignoriert
+#b)
+awk ' {acc=sqrt($2^2+$3^2+$4^2); print $0" "acc}' > tmp.txt #berechne den Betrag der x-, y- und z-Achse
+
+#c)
+awk '{sumx+=$2; sumy+=$3; sumz+=$4; suma+=$5} END {print sumx/NR" "sumy/NR" "sumz/NR" "suma/NR}' tmp.txt > statistics.txt
+
+m1=$(cut -d ' ' -f 1 statistics.txt)
+m2=$(cut -d ' ' -f 2 statistics.txt)
+m3=$(cut -d ' ' -f 3 statistics.txt)
+m4=$(cut -d ' ' -f 4 statistics.txt)
+
+awk -v m1=$m1 -v m2=$m2 -v m3=$m3 -v m4=$m4 '{v1+=($2-m1)^2; v2+=($3-m2)^2; v3+=($4-m3)^2; v4+=($5-m4)^2} END {print v1/NR" "v2/NR" "v3/NR" "v4/NR}' tmp.txt > statistics2.txt 
+v1=$(cut -d ' ' -f 1 statistics2.txt)
+v2=$(cut -d ' ' -f 2 statistics2.txt)
+v3=$(cut -d ' ' -f 3 statistics2.txt)
+v4=$(cut -d ' ' -f 4 statistics2.txt)
+
+#d)
+awk -v m1=$m1 -v m2=$m2 -v m3=$m3 -v m4=$m4 -v v1=$v1 -v v2=$v2 -v v3=$v3 -v v4=$v4 '{xz=($2-m1)/sqrt(v1); yz=($3-m2)/sqrt(v2); zz=($4-m3)/sqrt(v3); az=($5-m4)/sqrt(v4); print $0" "xz" "yz" "zz" "az}' tmp.txt |
+
+#e)
+#fallunterscheidung, je nachdem, ob man sich in der ersten Zeile befindet (dann ist die Beschleunigungsänderung gleich 0), oder nicht
+awk 'NR!=1 {h=sqrt(($2-oldx)^2+($3-oldy)^2+($4-oldz)^2); oldx=$2; oldy=$3; oldz=$4; print $0" "h} NR==1 {oldx=$2; oldy=$3; oldz=$4; print $0" 0"}' |
+
+#f)
+awk '{average=0.3*$10+0.7*average; print $0" "average}' #output auf stdout
+
+rm statistics.txt
+rm statistics2.txt
+rm tmp.txt

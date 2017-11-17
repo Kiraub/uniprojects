@@ -1,0 +1,17 @@
+cd ~
+mkdir uebung1
+cd uebung1
+touch beispiel1.txt
+mv beispiel1.txt ~
+cd ~
+find -maxdepth 1 -name *.pdf
+find -maxdepth 1 -type d
+
+chmod a+rwx beispiel1.txt
+cd uebung1
+touch bsp2.txt
+touch bsp3.txt
+find -name "*.txt" -exec chmod a+rw {} \;
+chmod a+rw *.txt
+
+find -maxdepth 1 -name *.pdf | head -n 10 > uebung1.txt

@@ -14,7 +14,7 @@ public class Field {
     public Field(FieldState state) {
         this.fState = state;
 
-        return this;
+        return;
     }
 
     public FieldState getState() {

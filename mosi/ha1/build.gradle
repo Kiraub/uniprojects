@@ -15,8 +15,9 @@ plugins {
 }
 
 // Define the main class for the application
-mainClassName = 'Main'
+mainClassName = 'com.gruppe3.Main'
 
+group = 'com.gruppe3'
 version = '0.1'
 
 dependencies {
@@ -41,7 +42,7 @@ jar {
     manifest {
         attributes 'Implementation-Title': 'G3-HA1',
                 'Implementation-Version': version,
-                'Main-Class': 'Main'
+                'Main-Class': 'com.gruppe3.Main'
     }
 
     from {

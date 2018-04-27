@@ -1,4 +1,4 @@
-package main.java;
+package com.gruppe3;
 
 /**
  * Matrix class for matrix objects of experiments
@@ -25,5 +25,19 @@ public class Matrix {
             }
         }
         return;
+    }
+
+
+    /**
+     * Prints the matrix on console
+     */
+    public void printMatrix() {
+        for(int i=0; i<this.dim; i+=1) {
+            System.out.print("|");
+            for(int j=0; j<this.dim; j+=1) {
+                System.out.print(this.cells[i][j].getSymbol());
+            }
+            System.out.println("|");
+        }
     }
 }

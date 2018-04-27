@@ -2,7 +2,8 @@
 
 ## Hausaufgabe 1 - Reproduzierbarkeit
 
-WIP
+Für Linux: Bauen des Projektes mit "gradlew build" und ausführen der Anwendung mit "gradlew run".
+Für Windows: Wie oben nur "gradlew.bat <...>"
 
 ### Experiment 1
 

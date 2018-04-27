@@ -22,6 +22,6 @@ public class Matrix {
                 this.cells[i][j] = new Field();
             }
         }
-        return this;
+        return;
     }
 }

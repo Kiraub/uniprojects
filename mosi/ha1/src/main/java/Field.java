@@ -1,3 +1,5 @@
+package main.java;
+
 /**
  * Field class for cell objects of a Matrix Object
  */

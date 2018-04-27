@@ -1,3 +1,5 @@
+package main.java;
+
 /**
  * Matrix class for matrix objects of experiments
  */
@@ -17,8 +19,8 @@ public class Matrix {
         this.dim = n;
         this.cells = new Field[n][n];
         // for-loop initialization of the matrix with field objects
-        for(int i=0; i<n; i+=1) {
-            for(int j=0; j<n; j+=1) {
+        for(int i=0; i<this.dim; i+=1) {
+            for(int j=0; j<this.dim; j+=1) {
                 this.cells[i][j] = new Field();
             }
         }

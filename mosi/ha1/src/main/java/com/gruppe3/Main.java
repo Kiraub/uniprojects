@@ -15,6 +15,9 @@ public class Main {
         Experiment ex0 = new Experiment(3, ex0cfg, 4, true);
 
         ex0.runExp();
+
+        // experiment task 1.2.2
+        //Experiment ex1 = new Experiment(21, ex1cfg, stepRun, printSteps)
     }
 
 }

@@ -44,12 +44,19 @@ public class Field {
     public FieldState getState() {
         return this.fState;
     }
-    public void setState(FieldState state) {
+    /**
+     * @return Whether the state has changed
+     */
+    public boolean setState(FieldState state) {
+        boolean changed = false;
         // do not allow null states to be set
         if(state != null) {
+            if(this.fState != state) {
+                changed = true;
+            }
             this.fState = state;
         }
-        return;
+        return changed;
     }
 
     /**

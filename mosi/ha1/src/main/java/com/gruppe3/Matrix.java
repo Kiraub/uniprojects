@@ -53,18 +53,21 @@ public class Matrix {
     /**
      * Apply a given config to the matrix' cells overwriting the exisiting one
      * @param conf The new config to be applied
+     * @return Whether the cells have changed
      */
-    public void applyConfig(FieldState[][] conf) {
+    public boolean applyConfig(FieldState[][] conf) {
+        boolean changed = false;
         for(int i=0; i<this.dim; i+=1) {
             for(int j=0; j<this.dim; j+=1) {
                 try {
                     // try applying conf
-                    this.cells[i][j].setState(conf[i][j]);
+                    changed = this.cells[i][j].setState(conf[i][j]) || changed;
                 } catch (Exception e) {
                     // if applying conf fails do not change the cell
                 }
             }
         }
+        return changed;
     }
 
     /**
@@ -107,7 +110,10 @@ public class Matrix {
                 }
             }
             // apply the next configuration of states
-            this.applyConfig(nxtConf);
+            if(!this.applyConfig(nxtConf)) {
+                System.out.println("Keine Veraenderung nach Schritt " + Integer.toString(step) + ".");
+                return step+1;
+            }
             if(printSteps) {
                 System.out.println("Schritt " + Integer.toString(step+1) + ". :");
                 this.printMatrix();

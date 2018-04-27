@@ -3,7 +3,7 @@ package com.gruppe3;
 public class Experiment {
 
     private Matrix mx;
-    private int stepRun;
+    private int stepSize;
     private boolean printSteps;
     private String message;
 
@@ -11,8 +11,8 @@ public class Experiment {
      * Experiment constructor with empty message
      * @see Experiment(int,FieldState[][],int,boolean,String)
      */
-    public Experiment(int dim, FieldState[][] conf, int stepRun, boolean printSteps) {
-        this(dim, conf, stepRun, printSteps, null);
+    public Experiment(int dim, FieldState[][] conf, int stepSize, boolean printSteps) {
+        this(dim, conf, stepSize, printSteps, null);
     }
 
     /**
@@ -23,9 +23,9 @@ public class Experiment {
      * @param printSteps Whether to print intermediate steps of the simulation
      * @param message Optional message to print in front of the simulation
      */
-    public Experiment(int dim, FieldState[][] conf, int stepRun, boolean printSteps, String message) {
+    public Experiment(int dim, FieldState[][] conf, int stepSize, boolean printSteps, String message) {
         this.mx = new Matrix(dim, conf);
-        this.stepRun = stepRun;
+        this.stepSize = stepSize;
         this.printSteps = printSteps;
         this.message = message;
     }
@@ -39,9 +39,9 @@ public class Experiment {
         }
         System.out.println("Start:");
         this.mx.printMatrix();
-        this.mx.stepCells(this.stepRun, this.printSteps);
+        this.mx.stepCells(this.stepSize, this.printSteps);
         if( ! this.printSteps) {
-            System.out.println("Schritt " + Integer.toString(this.stepRun) + ". :");
+            System.out.println("Schritt " + Integer.toString(this.stepSize) + ". :");
             this.mx.printMatrix();
         }
     }

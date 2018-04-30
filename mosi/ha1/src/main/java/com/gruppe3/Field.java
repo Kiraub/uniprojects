@@ -8,9 +8,13 @@ public class Field {
     // default state should a null been given at initialization
     private static FieldState DEFAULTSTATE = FieldState.GRASSLAND;
     private static String GRASSLANDSYMBOL = "G";
-    private static String WOODSSYMBOL = "W";
+    private static String FORESTSYMBOL = "W";
     private static String FIRESYMBOL = "F";
     private static String ERRSYMBOL = "-";
+
+    public static void printSymbolLegend() {
+        System.out.print("\nLegende:\n\t" + GRASSLANDSYMBOL + " = Wiese\n\t" + FORESTSYMBOL + " = Wald\n\t" + FIRESYMBOL + " = Feuer\n\n");
+    }
 
     /** State of the field */
     private FieldState fState;
@@ -70,10 +74,10 @@ public class Field {
     /**
      * Defines a set of rules that decide the next state given the current state and neighbouring cells without applying the next state
      * @param fireCnt The number of neighbouring fire cells
-     * @param woodCnt The number of neighbouring wood cells
+     * @param forestCnt The number of neighbouring forest cells
      * @return Predicted next state
      */
-    public FieldState nextState(int fireCnt, int woodCnt) {
+    public FieldState nextState(int fireCnt, int forestCnt) {
         if(this.fState == FieldState.GRASSLAND) {
             /*
                 First rule to be checked for GRASSLAND
@@ -83,25 +87,25 @@ public class Field {
             boolean grass2fire = fireCnt >= 1 ? true : false;
             /*
                 Second rule to be checked for GRASSLAND
-                If a grassland has at least two woods as neighbours, the next state is woods
+                If a grassland has at least two FOREST as neighbours, the next state is FOREST
             */
-            boolean grass2woods = woodCnt >= 2 ? true : false;
+            boolean grass2forest = forestCnt >= 2 ? true : false;
 
             // Check the rules
             if(grass2fire) {
                 return FieldState.FIRE;
-            } else if(grass2woods) {
-                return FieldState.WOODS;
+            } else if(grass2forest) {
+                return FieldState.FOREST;
             }
-        } else if(this.fState == FieldState.WOODS) {
+        } else if(this.fState == FieldState.FOREST) {
             /*
                 Only rule to be checked for FIRE
-                If woods have at least three fire as neighbours, the next state is fire
+                If FOREST have at least three fire as neighbours, the next state is fire
             */
-            boolean woods2fire = fireCnt >= 3 ? true : false;
+            boolean forest2fire = fireCnt >= 3 ? true : false;
 
             // Check the rule
-            if(woods2fire) {
+            if(forest2fire) {
                 return FieldState.FIRE;
             }
         }
@@ -110,7 +114,7 @@ public class Field {
     }
 
     /**
-     * Returns a character based on the current state of the field; FIRE-F, WOODS-W, GRASSLAND-G
+     * Returns a character based on the current state of the field
      * @return One character string representing the state
      */
     public String getSymbol() {
@@ -118,8 +122,8 @@ public class Field {
             case FIRE: {
                 return FIRESYMBOL;
             }
-            case WOODS: {
-                return WOODSSYMBOL;
+            case FOREST: {
+                return FORESTSYMBOL;
             }
             case GRASSLAND: {
                 return GRASSLANDSYMBOL;

@@ -5,7 +5,10 @@ package com.gruppe3;
  */
 public class Matrix {
 
+    private static boolean VERBOSE = false;
+
     private static String BORDERSYMBOL = "|";
+    private static String CORNERSYMBOL = "#";
 
     /** Dimension of the matrix */
     private int dim;
@@ -15,37 +18,26 @@ public class Matrix {
     /**
      * Matrix constructor with explicit dimension given and no configuration
      * @param n The dimension of the matrix
-     * @return matrix object with initialized cell objects with state GRASSLAND
+     * @return matrix object with non initialized cells
      */
     public Matrix(int n) {
-        this(n, null);
-        return;
+        this.dim = n;
+        this.cells = new Field[this.dim][this.dim];
     }
 
-    /**
-     * Matrix constructor with explicit dimension given and no configuration
-     * @param n The dimension of the matrix
-     * @param conf The configuration for the field states
-     * @return matrix object with initialized cell objects
-     */
-    public Matrix(int n, FieldState[][] conf) {
-        this.dim = n;
-        this.cells = new Field[n][n];
-        boolean confGiven = conf != null ? true : false;
-        // for-loop initialization of the matrix with field objects
-        for(int i=0; i<this.dim; i+=1) {
-            for(int j=0; j<this.dim; j+=1) {
-                try {
-                    // if config is given try applying conf
-                    if(confGiven) {
-                        this.cells[i][j] = new Field(conf[i][j]);
-                    } else {
-                        this.cells[i][j] = new Field();
-                    }
-                } catch (Exception e) {
-                    // if applying conf fails set cell to default
-                    this.cells[i][j] = new Field();
-                }
+    public int getDim() {
+        return this.dim;
+    }
+
+    public void setCell(int row, int column, FieldState state) {
+        if( row > 0 && row < this.dim && column > 0 && column < this.dim && state != null) {
+            try {
+                this.cells[row][column].setState(state);
+            } catch (Exception e) {
+                // Should not happen
+                System.out.println("Trying to set cell failed");
+                System.out.println(Integer.toString(row) + "; " + Integer.toString(column));
+                System.exit(1);
             }
         }
     }
@@ -63,7 +55,9 @@ public class Matrix {
                     // try applying conf
                     changed = this.cells[i][j].setState(conf[i][j]) || changed;
                 } catch (Exception e) {
-                    // if applying conf fails do not change the cell
+                    // if applying conf fails (re-)init cell
+                    this.cells[i][j] = new Field();
+                    changed = this.cells[i][j].setState(conf[i][j]) || changed;
                 }
             }
         }
@@ -71,10 +65,28 @@ public class Matrix {
     }
 
     /**
+     * Divide the cells in left half and right half with given field states
+     * @param left The state of the left half
+     * @param right The state of the right half
+     */
+    public void applyConfig(FieldState left, FieldState right) {
+        for(int i=0; i<this.dim; i+=1) {
+            for(int j=0; j<this.dim; j+=1) {
+                this.cells[i][j] = j <= (this.dim/2) ? new Field(left) : new Field(right);
+            }
+        }
+    }
+
+    /**
      * Prints the matrix on console with padding of one line space on top and bottom
      */
     public void printMatrix() {
         System.out.println();
+        System.out.print(CORNERSYMBOL);
+        for(int k=1; k<=this.dim;k+=1) {
+            System.out.print(Integer.toString(k%10));
+        }
+        System.out.println(CORNERSYMBOL);
         for(int i=0; i<this.dim; i+=1) {
             System.out.print(BORDERSYMBOL);
             for(int j=0; j<this.dim; j+=1) {
@@ -82,6 +94,11 @@ public class Matrix {
             }
             System.out.println(BORDERSYMBOL);
         }
+        System.out.print(CORNERSYMBOL);
+        for(int k=1; k<=this.dim;k+=1) {
+            System.out.print(Integer.toString(k%10));
+        }
+        System.out.println(CORNERSYMBOL);
         System.out.println();
     }
 
@@ -111,7 +128,7 @@ public class Matrix {
             }
             // apply the next configuration of states
             if(!this.applyConfig(nxtConf)) {
-                System.out.println("Keine Veraenderung nach Schritt " + Integer.toString(step) + ".");
+                if(VERBOSE) System.out.println("Keine Veraenderung nach Schritt " + Integer.toString(step) + ".\n");
                 return step+1;
             }
             if(printSteps) {
@@ -122,8 +139,14 @@ public class Matrix {
         return nSteps;
     }
 
+    /**
+     * Counts the number of fire and forest cells around a given cell
+     * @param row Row of the given cell
+     * @param column Column of the given cell
+     * @return Array with [0] # of fire and [1] # of forest cells
+     */
     public int[] countNbs(int row, int column) {
-        // neighbours [fireN, woodsN], grasslands are ignored as they are unimportant for the ruleset given
+        // neighbours [fireN, forestN], grasslands are ignored as they are unimportant for the ruleset given
         int[] nbs = {0, 0};
         /*
             check neighbours based on moore-neighborhood:
@@ -137,15 +160,15 @@ public class Matrix {
                 continue;
             }
             for(int dx = -1; dx <= 1; dx += 1) {
-                // skip some checks if cell is in column 0 or N
-                if( (column == 0 && dx == -1) || (column == this.dim-1 && dx == 1) ) {
+                // skip some checks if cell is in column 0 or N; also do not check the cell itself
+                if( (dx == 0 && dy == 0) || (column == 0 && dx == -1) || (column == this.dim-1 && dx == 1) ) {
                     continue;
                 }
                 // check the cell at coords [row+dy][column+dx]
                 FieldState neighbourState = this.cells[row+dy][column+dx].getState();
                 if(neighbourState == FieldState.FIRE) {
                     nbs[0] += 1;
-                } else if(neighbourState == FieldState.WOODS) {
+                } else if(neighbourState == FieldState.FOREST) {
                     nbs[1] += 1;
                 }
             }

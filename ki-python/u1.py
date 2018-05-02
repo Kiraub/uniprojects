@@ -55,6 +55,6 @@ class Course(object):
     def addParticipant(self,id,person):
         self.participants[id] = person
 
-ki = Course();
+ki = Course()
 ki.addParticipant(0,otto)
 ki.getParticipants()

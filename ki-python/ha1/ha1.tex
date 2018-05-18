@@ -1,0 +1,39 @@
+\documentclass[
+  a4paper,
+  11pt,
+]{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage[ngerman]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\setlength{\parindent}{0pt}
+
+\title{KI -- Hausaufgabe 1}
+\subtitle{Erik Bauer | 215204632}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Aufgabe 1 -- Der Staubsauger Agent}
+
+\subsection*{Teilaufgabe 1.}
+
+Siehe beigefügte Python-Dateien in den Bereichen zwischen \verb|## S Added| und \verb|## E Added|.
+
+Der Roboter bewegt sich, sofern vorhanden, in die Richtung eines benachbarten, nicht besuchten Feldes.
+Sind alle benachbarten Felder besucht, so bewegt er sich zufällig in eine Richtung.
+War seine Bewegung ohne Effekt, d.h. seine vorherige und derzeitige beobachtete Position ist identisch, bewegt er sich nicht in die vorher zufällig gewählte Richtung.
+
+\subsection*{Teilaufgabe 2.}
+
+Nein, er reinigt seine Umgebung i.d.R. nicht in der minimalen Anzahl Bewegungen es sei denn, seine Startposition ist günstig gesetzt, in meiner Implementierung die untere linke Ecke. Jedoch selbst dann bewegt er sich gegen die Wände, da er sie nicht sehen kann. Dies liegt, unter Anderem, an der \glqq Kurzsichtigkeit\grqq{} des Roboters, da er lediglich nur die direkt benachbarten Felder in seine Richtungsentscheidung einbezieht. Des Weiteren fehlt ihm die Funktion aus der Entfernung Verunreinigungen festzustellen. Ebenfalls fehlt eine Funktionalität, welche zwischen mehreren noch nicht besuchten Richtungen Anhand eines Qualitätsmerkmals bzw. einer Kostenfunktion entscheidet.
+
+Ein optimaler Roboter benötigt also von Anfang an ein Verständnis seiner Umgebung, Fläche und Verschmutzungen, um seinen Pfad planen zu können, sowie eine Suchfunktion, um den kostengünstigsten Pfad zu finden. Im Bezug auf den Roboter ist dieser Pfad derjenige, welcher, von der Startposition ausgehend, alle verunreinigten Felder mindestens einmal und so wenig saubere wie möglich besucht.
+
+\end{document}

@@ -80,41 +80,59 @@ def ReflexVacuumAgent():
 
 def ModelBasedVacuumAgent():
     model = {}
-    previousPos = {}
-    previousMove = 'None'
+
+    ## S Added
+
+    model["previousPos"] = (-1,-1)
+    model["previousMove"] = 'None'
+
+    ## E Added
 
     def program(percept):
-        print(model)
+
+        ## S Added
+
         if(percept[1]=="Dirty"):
+            # An der akutellen Position ist Staub also saugen
+            if(percept[0] not in model):
+                # Ausserdem falls die Position die Startposition ist und daher nicht gesehen, als gesehen markieren
+                model[percept[0]] = 1
+                model["previousPos"] = percept[0]
             return "Suck"
         else:
             x = percept[0][0]
             y = percept[0][1]
+            # Nacheinander prüfen ob eine der vier Richtungen noch nicht gesehen wurden
+            # Wurde eine Richtung noch nicht gesehen, dann als gesehen markieren, momentane Position als vorherige merken und dann bewegen
+            # Wurden bereits alle Richtungen gesehen, dann eine zufällig auswählen
+            # Ist die momentane und die vorherige Position identisch, dann wird die vorherige Bewegung aus der Zufallsmenge ausgeschlossen
             if((x+1,y) not in model):
                 model[((x+1,y))] = 1
-                previousPos = percept[0]
-                previousMove = 'Right'
-                return previousMove
+                model["previousPos"] = percept[0]
+                model["previousMove"] = 'Right'
+                return model.get("previousMove")
             elif((x-1,y) not in model):
                 model[((x-1,y))] = 1
-                previousPos = percept[0]
-                previousMove = 'Left'
-                return previousMove
+                model["previousPos"] = percept[0]
+                model["previousMove"] = 'Left'
+                return model.get("previousMove")
             elif((x,y+1) not in model):
                 model[((x,y+1))] = 1
-                previousPos = percept[0]
-                previousMove = 'Up'
-                return previousMove
+                model["previousPos"] = percept[0]
+                model["previousMove"] = 'Down'
+                return model.get("previousMove")
             elif((x,y-1) not in model):
-                model[((x,y-1))] = 1
-                previousPos = percept[0]
-                previousMove = 'Down'
-                return previousMove
+                model[(x,y-1)] = 1
+                model["previousPos"] = percept[0]
+                model["previousMove"] = 'Up'
+                return model.get("previousMove")
             else:
                 c = ['Right', 'Left','Up','Down']
-                if(previousPos == percept[0]):
-                    c /= previousMove
+                if(model.get("previousPos") == percept[0] and model.get("previousMove") is not 'None'):
+                    c.remove(model.get("previousMove"))
                 return random.choice(c)
+
+        ## E Added
 
     return Agent(program)
 
@@ -134,7 +152,7 @@ class Environment:
         self.things = []
         self.agents = []
         self.size=size
-        
+
     def thing_classes(self):
         return []  # List of classes that can go into environment
 
@@ -225,9 +243,9 @@ class Environment:
         for y in range(self.size[1]+1):
             canvas.create_line(0,y*100,self.size[0]*100,y*100)
         canvas.update()
-        
 
-    
+
+
 class VacuumEnvironment2D(Environment):
 
     def __init__(self,size=(10,10)):
@@ -236,10 +254,16 @@ class VacuumEnvironment2D(Environment):
         for x in range(size[0]):
             for y in range(size[1]):
                 self.status[(x,y)]=random.choice(['Clean', 'Dirty'])
-        
+
     def thing_classes(self):
-        return [Wall, Dirt, ReflexVacuumAgent, RandomVacuumAgent,
-                TableDrivenVacuumAgent, ModelBasedVacuumAgent]
+        return [
+            #Wall,
+            #Dirt,
+            ReflexVacuumAgent,
+            #RandomVacuumAgent,
+            #TableDrivenVacuumAgent,
+            ModelBasedVacuumAgent
+        ]
 
     def percept(self, agent):
         """Returns the agent's location, and the location status (Dirty/Clean)."""
@@ -295,7 +319,7 @@ e.add_thing(TraceAgent(ModelBasedVacuumAgent()))
 e.add_thing(TraceAgent(ModelBasedVacuumAgent()))
 e.add_thing(TraceAgent(ReflexVacuumAgent()))
 c=Canvas(tk_master,width=800,height=600, background='white')
-c.pack();
+c.pack()
 tk_master.bind("<space>",lambda event: e.step(c))
 tk_master.after(0,lambda: e.display(c))
 mainloop()
